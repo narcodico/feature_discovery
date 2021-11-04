@@ -9,11 +9,11 @@ abstract class PersistenceProvider {
 
   /// Returns the list of steps (as strings) that the user has previously completed from
   /// the provided [featuresIds] set.
-  Future<Set<String?>> completedSteps(Iterable<String?>? featuresIds);
+  Future<Set<String>> completedSteps(Iterable<String> featuresIds);
 
   /// Informs the persistence layer that the user has completed the step identified by
   /// [featureId], and that it should record it in the persistence layer.
-  Future<void> completeStep(String? featureId);
+  Future<void> completeStep(String featureId);
 
   /// Requests that the persistence layer should remove the completion of the step
   /// identified by [featureId].
@@ -40,21 +40,21 @@ class SharedPreferencesProvider implements PersistenceProvider {
   @override
   Future<bool> hasCompletedStep(String featureId) async {
     final prefs = await SharedPreferences.getInstance();
-    final hasCompleted = await prefs.getBool(_normalizeFeatureId(featureId));
+    final hasCompleted = prefs.getBool(_normalizeFeatureId(featureId));
     return hasCompleted == true;
   }
 
   @override
-  Future<Set<String?>> completedSteps(Iterable<String?>? featuresIds) async {
+  Future<Set<String>> completedSteps(Iterable<String> featuresIds) async {
     final prefs = await SharedPreferences.getInstance();
-    return featuresIds!
+    return featuresIds
         .where((featureId) =>
             prefs.getBool(_normalizeFeatureId(featureId)) == true)
         .toSet();
   }
 
   @override
-  Future<void> completeStep(String? featureId) async {
+  Future<void> completeStep(String featureId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_normalizeFeatureId(featureId), true);
   }
@@ -69,12 +69,12 @@ class SharedPreferencesProvider implements PersistenceProvider {
   Future<void> clearSteps(Iterable<String> featuresIds) async {
     final prefs = await SharedPreferences.getInstance();
 
-    final mapResult = featuresIds.map<Future>((featureId) async =>
-        await prefs.remove(_normalizeFeatureId(featureId)));
-    await Future.wait(mapResult);
+    final removers = featuresIds
+        .map((featureId) => prefs.remove(_normalizeFeatureId(featureId)));
+    await Future.wait(removers);
   }
 
-  String _normalizeFeatureId(String? featureId) =>
+  String _normalizeFeatureId(String featureId) =>
       '$sharedPrefsPrefix$featureId';
 }
 
@@ -86,24 +86,24 @@ class SharedPreferencesProvider implements PersistenceProvider {
 /// This is a great implementation for testing.
 class MemoryPersistenceProvider implements PersistenceProvider {
   /// Instantiates a new [MemoryPersistenceProvider] with an initial completed set of steps.
-  const MemoryPersistenceProvider(Set<String?> steps) : _steps = steps;
+  const MemoryPersistenceProvider(Set<String> steps) : _steps = steps;
 
   /// Instantiates an empty [MemoryPersistenceProvider] instance.
   factory MemoryPersistenceProvider.empty() =>
-      const MemoryPersistenceProvider(<String?>{});
+      const MemoryPersistenceProvider(<String>{});
 
-  final Set<String?> _steps;
+  final Set<String> _steps;
 
   @override
   Future<bool> hasCompletedStep(String featureId) async =>
       _steps.contains(featureId);
 
   @override
-  Future<Set<String?>> completedSteps(Iterable<String?>? featuresIds) async =>
-      featuresIds!.where((featureId) => _steps.contains(featureId)).toSet();
+  Future<Set<String>> completedSteps(Iterable<String> featuresIds) async =>
+      featuresIds.where((featureId) => _steps.contains(featureId)).toSet();
 
   @override
-  Future<void> completeStep(String? featureId) async => _steps.add(featureId);
+  Future<void> completeStep(String featureId) async => _steps.add(featureId);
 
   @override
   Future<void> clearStep(String featureId) async => _steps.remove(featureId);
@@ -123,11 +123,11 @@ class NoPersistenceProvider implements PersistenceProvider {
   Future<bool> hasCompletedStep(String featureId) async => false;
 
   @override
-  Future<Set<String?>> completedSteps(Iterable<String?>? featuresIds) async =>
-      <String?>{};
+  Future<Set<String>> completedSteps(Iterable<String> featuresIds) async =>
+      <String>{};
 
   @override
-  Future<void> completeStep(String? featureId) async {
+  Future<void> completeStep(String featureId) async {
     // NO-OP
   }
 

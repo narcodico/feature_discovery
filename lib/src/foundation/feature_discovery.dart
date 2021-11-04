@@ -37,7 +37,7 @@ class FeatureDiscovery extends StatelessWidget {
   /// onto the next step after the completion animation of the current overlay.
   ///
   /// The `onComplete` parameter will be ignored for every active overlay.
-  static Future<void> completeCurrentStep(BuildContext context) async =>
+  static Future<void> completeCurrentStep(BuildContext context) =>
       _blocOf(context).completeStep();
 
   /// This will return true iff
@@ -118,7 +118,7 @@ class FeatureDiscovery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-        child: child,
         persistenceProvider: persistenceProvider,
+        child: child,
       );
 }
