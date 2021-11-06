@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:math' hide log;
+import 'dart:math';
 
 import 'package:feature_discovery/src/foundation.dart';
 import 'package:feature_discovery/src/rendering.dart';
@@ -606,13 +605,9 @@ class _DescribedFeatureOverlayState extends State<DescribedFeatureOverlay>
     /// then will call the bloc's complete function
     /// only if this overlay has been successfully dismissed.
     void tryCompleteThis() async {
-      log('tryCompleteThis: $_state');
       await _complete();
-      log('tryCompleteThis after _complete: $_state');
       if (_state == FeatureOverlayState.closed) {
-        log('tryCompleteThis FeatureOverlayState.closed: $_state');
         await _bloc.completeStep();
-        log('tryCompleteThis FeatureOverlayState.closed after completeStep: $_state');
       }
     }
 

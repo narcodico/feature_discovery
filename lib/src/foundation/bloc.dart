@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -104,33 +103,22 @@ class Bloc {
         'You need to pass at least one step to [FeatureDiscovery.discoverFeatures].');
 
     _steps = steps as List<String>;
-    log('discoverFeatures steps: $_steps');
     _stepsToIgnore = await _alreadyCompletedSteps;
-    log('discoverFeatures _stepsToIgnore: $_steps');
     _steps = _steps.where((s) => !_stepsToIgnore.contains(s)).toList();
-    log('discoverFeatures _steps: $_steps');
     _activeStepIndex = -1;
 
     await _nextStep();
   }
 
   Future<void> completeStep() async {
-    if (_steps.isEmpty) {
-      log('_steps is empty');
-      return;
-    }
+    if (_steps.isEmpty) return;
     // This will ignore the [onComplete] function of all overlays.
     _eventsIn.add(EventType.complete);
     await _nextStep();
   }
 
   Future<void> _nextStep() async {
-    log('next step with activeFeatureId = $activeFeatureId');
-    if (activeFeatureId != null) {
-      log('completing feature = $activeFeatureId');
-      await _saveCompletionOf(activeFeatureId!);
-    }
-    log('not completing feature = $activeFeatureId');
+    if (activeFeatureId != null) await _saveCompletionOf(activeFeatureId!);
     _activeStepIndex = _activeStepIndex + 1;
     _activeOverlays = 0;
 
