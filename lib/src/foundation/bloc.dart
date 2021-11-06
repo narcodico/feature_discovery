@@ -112,7 +112,10 @@ class Bloc {
   }
 
   Future<void> completeStep() async {
-    if (_steps.isEmpty) return;
+    if (_steps.isEmpty) {
+      log('_steps is empty');
+      return;
+    }
     // This will ignore the [onComplete] function of all overlays.
     _eventsIn.add(EventType.complete);
     await _nextStep();
