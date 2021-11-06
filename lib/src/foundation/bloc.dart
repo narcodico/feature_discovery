@@ -104,8 +104,11 @@ class Bloc {
         'You need to pass at least one step to [FeatureDiscovery.discoverFeatures].');
 
     _steps = steps as List<String>;
+    log('discoverFeatures steps: $_steps');
     _stepsToIgnore = await _alreadyCompletedSteps;
+    log('discoverFeatures _stepsToIgnore: $_steps');
     _steps = _steps.where((s) => !_stepsToIgnore.contains(s)).toList();
+    log('discoverFeatures _steps: $_steps');
     _activeStepIndex = -1;
 
     await _nextStep();
