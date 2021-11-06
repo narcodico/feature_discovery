@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Declares a contract to remember which Feature Discoveries were already viewed by
@@ -57,6 +59,7 @@ class SharedPreferencesProvider implements PersistenceProvider {
   Future<void> completeStep(String featureId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_normalizeFeatureId(featureId), true);
+    log('$featureId was persisted!');
   }
 
   @override

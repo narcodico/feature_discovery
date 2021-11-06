@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -118,7 +119,12 @@ class Bloc {
   }
 
   Future<void> _nextStep() async {
-    if (activeFeatureId != null) await _saveCompletionOf(activeFeatureId!);
+    log('next step with activeFeatureId = $activeFeatureId');
+    if (activeFeatureId != null) {
+      log('completing feature = $activeFeatureId');
+      await _saveCompletionOf(activeFeatureId!);
+    }
+    log('not completing feature = $activeFeatureId');
     _activeStepIndex = _activeStepIndex + 1;
     _activeOverlays = 0;
 
